@@ -39,6 +39,13 @@ class AuthController extends Controller
 
     public function dashboard()
     {
+        $user = auth()->user();
+
+        if ($user->role->name === 'User') {
+            $reports = \App\Models\Report::where('user_id', $user->id)->latest()->get();
+            return view('dashboard', compact('reports'));
+        }
+
         return view('dashboard');
     }
 }

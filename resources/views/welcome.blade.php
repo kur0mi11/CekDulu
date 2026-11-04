@@ -6,17 +6,35 @@
 <div class="row justify-content-center text-center mt-5">
     <div class="col-md-8">
         <h1 class="fw-bold text-primary">Selamat Datang di CekDulu</h1>
-        <p class="lead">Platform Pengecekan, Pelaporan, dan Verifikasi Indikasi Penipuan Digital.</p>
+        <p class="lead">Platform pencarian informasi nomor telepon yang terindikasi penipuan</p>
         
         <div class="card mt-4 shadow-sm">
             <div class="card-body">
-                <h5 class="card-title mb-3">Cek Rekening / Nomor Telepon</h5>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Masukkan Nomor/Link/Rekening mencurigakan..." aria-label="Search">
-                    <button class="btn btn-primary" type="button">Cari</button>
+                <h5 class="card-title mb-3">Cek Nomor Telepon</h5>
+                <form class="d-flex" action="{{ url('/') }}" method="GET">
+                    <input class="form-control me-2" type="search" name="nomor" value="{{ request('nomor') }}" placeholder="Masukkan nomor telepon..." aria-label="Search" required>
+                    <button class="btn btn-primary" type="submit">Cari</button>
                 </form>
             </div>
         </div>
+
+        @if(isset($query))
+            <div class="mt-4 text-start">
+                @if($laporan)
+                    <div class="alert alert-warning">
+                        <h5 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Nomor ini memiliki laporan terverifikasi terkait indikasi penipuan.</h5>
+                        <hr>
+                        <p class="mb-1"><strong>Nomor Telepon:</strong> {{ $laporan->reported_value }}</p>
+                        <p class="mb-1"><strong>Kategori:</strong> {{ $laporan->category->name ?? 'Tidak diketahui' }}</p>
+                        <p class="mb-0"><strong>Kronologi Singkat:</strong> {{ $laporan->chronology }}</p>
+                    </div>
+                @else
+                    <div class="alert alert-info">
+                        Belum ditemukan laporan terverifikasi untuk nomor ini.
+                    </div>
+                @endif
+            </div>
+        @endif
     </div>
 </div>
 @endsection

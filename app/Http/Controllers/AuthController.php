@@ -43,16 +43,33 @@ class AuthController extends Controller
     public function dashboard()
     {
         $user = auth()->user();
+        $role = $user->role?->name;
 
-        if ($user->role?->name === 'User') {
+        $reports = collect();
+        $stats = [];
+
+        if ($role === 'User') {
             $reports = Report::with('category')
                 ->where('user_id', $user->id)
                 ->latest()
                 ->get();
-            return view('dashboard', compact('reports'));
+            $stats = $reports->countBy('status')->all();
+        } elseif ($role === 'Verifier') {
+            $stats = [
+                'pending'       => Report::where('status', 'pending')->count(),
+                'need_revision' => Report::where('status', 'need_revision')->count(),
+                'done'          => Report::where('verifier_id', $user->id)
+                                        ->whereNotIn('status', ['pending', 'need_revision'])
+                                        ->count(),
+            ];
+        } elseif ($role === 'Admin') {
+            $stats = Report::selectRaw('status, count(*) as total')
+                ->groupBy('status')
+                ->pluck('total', 'status')
+                ->all();
         }
 
-        return view('dashboard');
+        return view('dashboard', compact('role', 'stats', 'reports'));
     }
 
     public function showRegistrationForm()

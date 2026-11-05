@@ -28,7 +28,8 @@ Route::middleware(['auth', 'nocache'])->group(function () {
 
     // user workspace
     Route::middleware('role:User')->group(function () {
-        Route::resource('reports', ReportController::class);
+        Route::get('/reports/{id}/evidence', [ReportController::class, 'evidence'])->name('reports.evidence');
+        Route::resource('reports', ReportController::class)->except(['destroy']);
     });
 
     // verifier workspace

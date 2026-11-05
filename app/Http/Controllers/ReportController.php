@@ -2,69 +2,94 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Report;
 use App\Models\Category;
+use App\Models\Report;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
     public function index()
     {
-        $reports = Report::where('user_id', auth()->id())->latest()->get();
-    
-        return view('dashboard', compact('reports'));
+        return redirect()->route('dashboard');
     }
 
     public function create()
     {
-        $categories = \App\Models\Category::all();
-        
+        $categories = Category::orderBy('name')->get();
+
         return view('reports.create', compact('categories'));
     }
 
-    public function store(Request $request) {
-    //validasi input
-    $validated = $request->validate([
-        'reported_value' => 'required|string',
-        'category_id'    => 'required|exists:categories,id',
-        'chronology'     => 'required|string',
-        'evidence_file'  => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
-    ]);
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'reported_value' => 'required|string',
+            'category_id'    => 'required|exists:categories,id',
+            'chronology'     => 'required|string',
+            'evidence_file'  => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ], [
+            'reported_value.required' => 'Nomor telepon wajib diisi.',
+            'category_id.required'    => 'Pilih kategori laporan.',
+            'category_id.exists'      => 'Kategori yang dipilih tidak valid.',
+            'chronology.required'     => 'Kronologi kejadian wajib diisi.',
+            'evidence_file.required'  => 'Bukti pendukung wajib diunggah.',
+            'evidence_file.mimes'     => 'Bukti harus berupa file JPG, PNG, atau PDF.',
+            'evidence_file.max'       => 'Ukuran bukti maksimal 2 MB.',
+        ]);
 
-    //normalisasi nomor telepon (buang karakter non-angka, ubah format 62xx ke 0xx)
-    $cleanPhone = preg_replace('/[^0-9]/', '', $request->reported_value);
-    if (str_starts_with($cleanPhone, '62')) {
-        $cleanPhone = '0' . substr($cleanPhone, 2);
-    }
-
-    //menyimpan file bukti ke private storage
-    $path = $request->file('evidence_file')->store('evidences', 'local');
-
-    //menyimpan ke database
-    Report::create([
-        'user_id'        => auth()->id(),
-        'category_id'    => $validated['category_id'],
-        'reported_type'  => 'phone', // Terkunci otomatis untuk MVP
-        'reported_value' => $cleanPhone,
-        'chronology'     => $validated['chronology'],
-        'evidence_file'  => $path,
-        'status'         => 'pending', // Status awal sesuai alur sistem
-    ]);
-
-    return redirect()->route('reports.index')->with('success', 'Laporan berhasil dikirim dan menunggu pemeriksaan!');
-    }
-
-    public function show(string $id) {
-        $report = Report::with(['category', 'user'])->findOrFail($id);
-    
-        if ($report->user_id !== auth()->id()) {
-            abort(403, 'Akses ditolak.');
+        $cleanPhone = preg_replace('/[^0-9]/', '', $validated['reported_value']);
+        if (str_starts_with($cleanPhone, '62')) {
+            $cleanPhone = '0' . substr($cleanPhone, 2);
         }
 
-        return view('reports.show', compact('report'));
-        
+        $path = $request->file('evidence_file')->store('evidences', 'local');
+
+        Report::create([
+            'user_id'        => auth()->id(),
+            'category_id'    => $validated['category_id'],
+            'reported_type'  => 'phone',
+            'reported_value' => $cleanPhone,
+            'chronology'     => $validated['chronology'],
+            'evidence_file'  => $path,
+            'status'         => 'pending',
+        ]);
+
+        return redirect()
+            ->route('dashboard')
+            ->with('success', 'Laporan berhasil dikirim dan menunggu pemeriksaan.');
     }
-    public function edit(string $id) {}
-    public function update(Request $request, string $id) {}
-    public function destroy(string $id) {}
+
+    public function show(string $id)
+    {
+        $report = Report::with('category')->findOrFail($id);
+
+        abort_if($report->user_id !== auth()->id(), 403, 'Akses ditolak.');
+
+        return view('reports.show', compact('report'));
+    }
+
+    public function evidence(string $id)
+    {
+        $report = Report::findOrFail($id);
+
+        abort_if($report->user_id !== auth()->id(), 403, 'Akses ditolak.');
+        abort_unless(
+            $report->evidence_file && Storage::disk('local')->exists($report->evidence_file),
+            404,
+            'File bukti tidak ditemukan.'
+        );
+
+        return Storage::disk('local')->response($report->evidence_file);
+    }
+  
+    public function edit(string $id)
+    {
+        abort(404);
+    }
+
+    public function update(Request $request, string $id)
+    {
+        abort(404);
+    }
 }

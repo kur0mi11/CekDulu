@@ -9,10 +9,6 @@
         <a href="{{ route('dashboard') }}" class="btn btn-secondary">Kembali ke Dashboard</a>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
     <div class="card shadow-sm">
         <div class="card-body table-responsive">
             @if($reports->isEmpty())

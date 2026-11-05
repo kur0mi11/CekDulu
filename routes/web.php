@@ -10,10 +10,14 @@ use App\Http\Controllers\AdminController;
 // rute public
 Route::get('/', [PageController::class, 'index']);
 
-// rute guest kalau blm login
+//rute guest kalau blm login
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
+    
+    // Rute Register Baru
+    Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
 });
 
 // rute terauntentikasi (wajib login)

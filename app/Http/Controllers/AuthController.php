@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Report;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,9 +27,9 @@ class AuthController extends Controller
             return redirect()->intended('dashboard');
         }
 
-        return back()->withErrors([
-            'email' => 'Email atau password yang Anda masukkan salah.',
-        ]);
+        return back()
+            ->withErrors(['email' => 'Email atau password yang Anda masukkan salah.'])
+            ->onlyInput('email');
     }
 
     public function logout(Request $request)
@@ -41,8 +44,11 @@ class AuthController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->role->name === 'User') {
-            $reports = \App\Models\Report::where('user_id', $user->id)->latest()->get();
+        if ($user->role?->name === 'User') {
+            $reports = Report::with('category')
+                ->where('user_id', $user->id)
+                ->latest()
+                ->get();
             return view('dashboard', compact('reports'));
         }
 
@@ -62,19 +68,22 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $roleId = 1; 
+        $roleId = Role::where('name', 'User')->value('id');
+
+        if (!$roleId) {
+            abort(500, 'Role User belum tersedia. Jalankan: php artisan db:seed --class=RoleSeeder');
+        }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role_id' => $roleId, 
+            'password' => $request->password, // di-hash otomatis oleh cast 'hashed' di model User
+            'role_id' => $roleId,
         ]);
 
-        auth()->login($user);
+        Auth::login($user);
+        $request->session()->regenerate();
 
         return redirect()->route('dashboard')->with('success', 'Registrasi berhasil! Selamat datang di CekDulu.');
     }
-
-    
 }

@@ -1,0 +1,1 @@
+<span class="badge {{ $report->status_class }}">{{ $report->status_label }}</span>

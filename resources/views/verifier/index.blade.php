@@ -17,12 +17,6 @@
         </a>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4">
-            <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-        </div>
-    @endif
-
     <!-- Card Utama -->
     <div class="card shadow-sm border-0 mb-4" style="border-radius: 16px; overflow: hidden;">
         

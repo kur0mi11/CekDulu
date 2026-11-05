@@ -17,8 +17,32 @@ class Report extends Model
         'status',
         'verifier_id',
         'admin_id',
-        'revision_note'
+        'revision_note',
     ];
+
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->status) {
+            'pending'              => 'Menunggu Pemeriksaan',
+            'need_revision'        => 'Perlu Revisi',
+            'pending_admin_review' => 'Menunggu Peninjauan',
+            'verified'             => 'Terverifikasi',
+            'rejected'             => 'Ditolak',
+            default                => (string) $this->status,
+        };
+    }
+
+    public function getStatusClassAttribute(): string
+    {
+        return match ($this->status) {
+            'pending'              => 'bg-warning text-dark',
+            'need_revision'        => 'bg-danger',
+            'pending_admin_review' => 'bg-info text-dark',
+            'verified'             => 'bg-success',
+            default                => 'bg-secondary',
+        };
+    }
 
     public function user(): BelongsTo
     {

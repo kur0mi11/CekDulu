@@ -55,32 +55,62 @@
                                 </div>
                                 <div>
                                     <p class="text-muted small fw-bold mb-0 text-uppercase" style="letter-spacing: 0.5px;">Selesai Dicek</p>
-                                    <h2 class="fw-bold text-dark mb-0 mt-1">{{ \App\Models\Report::where('verifier_id', Auth::id())->count() }}</h2>
+                                    <h2 class="fw-bold text-dark mb-0 mt-1">
+                                        {{ \App\Models\Report::where('verifier_id', Auth::id())->whereNotIn('status', ['pending', 'need_revision'])->count() }}
+                                    </h2>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm" style="border-radius: 16px;">
-                    <div class="card-body p-4">
-                        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between text-center text-md-start">
-                            <div class="d-flex flex-column flex-md-row align-items-center mb-3 mb-md-0">
-                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex justify-content-center align-items-center flex-shrink-0 mb-3 mb-md-0 me-md-4" style="width: 60px; height: 60px;">
-                                    <i class="bi bi-shield-check fs-3"></i>
+                <!-- KUMPULAN TOMBOL AKSI (HORIZONTAL CARDS) -->
+                <div class="d-flex flex-column gap-3">
+                    
+                    <!-- Card 1: Tugas Pemeriksaan (Utama) -->
+                    <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                        <div class="card-body p-4">
+                            <div class="d-flex flex-column flex-md-row align-items-center justify-content-between text-center text-md-start">
+                                <div class="d-flex flex-column flex-md-row align-items-center mb-3 mb-md-0">
+                                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex justify-content-center align-items-center flex-shrink-0 mb-3 mb-md-0 me-md-4" style="width: 60px; height: 60px;">
+                                        <i class="bi bi-shield-check fs-3"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="fw-bold text-dark mb-1">Tugas Pemeriksaan</h5>
+                                        <p class="text-muted small mb-0 mx-auto mx-md-0" style="max-width: 600px;">
+                                            Gunakan menu antrean utama untuk meninjau dan memverifikasi laporan yang masuk. Pastikan validitas bukti sebelum meneruskan ke Admin atau meminta revisi pelapor.
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h5 class="fw-bold text-dark mb-1">Tugas Pemeriksaan</h5>
-                                    <p class="text-muted small mb-0 mx-auto mx-md-0" style="max-width: 600px;">
-                                        Gunakan menu antrean utama untuk meninjau dan memverifikasi laporan yang masuk. Pastikan validitas bukti sebelum meneruskan ke Admin atau meminta revisi pelapor.
-                                    </p>
-                                </div>
+                                <a href="{{ route('verifier.index') }}" class="btn btn-primary rounded-pill px-4 py-2 fw-medium shadow-sm text-nowrap ms-md-3">
+                                    Buka Antrean <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
                             </div>
-                            <a href="{{ route('verifier.index') }}" class="btn btn-primary rounded-pill px-4 py-2 fw-medium shadow-sm text-nowrap ms-md-3">
-                                Buka Antrean <i class="bi bi-arrow-right ms-1"></i>
-                            </a>
                         </div>
                     </div>
+
+                    <!-- Card 2: Riwayat Pemeriksaan (Sekunder) -->
+                    <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                        <div class="card-body p-4">
+                            <div class="d-flex flex-column flex-md-row align-items-center justify-content-between text-center text-md-start">
+                                <div class="d-flex flex-column flex-md-row align-items-center mb-3 mb-md-0">
+                                    <div class="bg-secondary bg-opacity-10 text-secondary rounded-circle d-flex justify-content-center align-items-center flex-shrink-0 mb-3 mb-md-0 me-md-4" style="width: 60px; height: 60px;">
+                                        <i class="bi bi-clock-history fs-3"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="fw-bold text-dark mb-1">Riwayat Pemeriksaan</h5>
+                                        <p class="text-muted small mb-0 mx-auto mx-md-0" style="max-width: 600px;">
+                                            Tinjau kembali daftar laporan indikasi penipuan yang telah selesai Anda verifikasi (baik yang diteruskan ke Admin maupun yang ditolak).
+                                        </p>
+                                    </div>
+                                </div>
+                                <a href="{{ route('verifier.index') }}#riwayat-pane" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-medium shadow-sm text-nowrap ms-md-3">
+                                    Lihat Riwayat <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
 

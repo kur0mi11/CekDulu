@@ -24,7 +24,20 @@ class VerifierController extends Controller
             ->latest()
             ->get();
 
-        return view('verifier.index', compact('antrean'));
+        $riwayat = Report::where('verifier_id', auth()->id())
+            ->whereNotIn('status', ['pending', 'need_revision'])
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('reported_value', 'like', '%' . $search . '%')
+                      ->orWhereHas('user', function ($userQuery) use ($search) {
+                          $userQuery->where('name', 'like', '%' . $search . '%');
+                      });
+                });
+            })
+            ->latest()
+            ->get();
+
+        return view('verifier.index', compact('antrean', 'riwayat'));
     }
 
     public function show($id)
@@ -50,10 +63,19 @@ class VerifierController extends Controller
             $report->revision_note = null;
         }
 
-        //mencatat verifikator yang memeriksa
         $report->verifier_id = auth()->id();
         $report->save();
 
         return redirect()->route('verifier.index')->with('success', 'Status laporan berhasil diperbarui.');
+    }
+
+    public function showEvidence($id)
+    {
+        $report = Report::findOrFail($id);
+        if (!$report->evidence_file || !Storage::exists($report->evidence_file)) {
+            abort(404, 'File bukti tidak ditemukan di server.');
+        }
+
+        return Storage::response($report->evidence_file);
     }
 }

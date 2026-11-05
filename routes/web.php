@@ -7,44 +7,38 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VerifierController;
 use App\Http\Controllers\AdminController;
 
-//rute public
+// rute public
 Route::get('/', [PageController::class, 'index']);
 
-//rute guest kalau blm login
+// rute guest kalau blm login
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
 });
 
-//rute terauntentikasi (wajib login)
+// rute terauntentikasi (wajib login)
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    //general dashboard
+    // general dashboard
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
 
-    //user workspace
+    // user workspace
     Route::middleware('role:User')->group(function () {
         Route::resource('reports', ReportController::class); 
     });
 
-    //verifier workspace
+    // verifier workspace
     Route::middleware('role:Verifier')->prefix('verifier')->name('verifier.')->group(function () {
         Route::get('/antrean', [VerifierController::class, 'index'])->name('index');
         Route::get('/laporan/{id}', [VerifierController::class, 'show'])->name('reports.show');
         Route::patch('/laporan/{id}/status', [VerifierController::class, 'updateStatus'])->name('reports.update');
-        Route::get('/laporan/{id}/evidence', function($id) {
-            $report = Report::findOrFail($id);
-            
-            if (!Storage::disk('private')->exists($report->evidence_file)) {
-                abort(404, 'File bukti tidak ditemukan.');
-            }
-
-            return Storage::disk('private')->response($report->evidence_file);
-        })->name('reports.evidence');
+        
+        // Rute streaming file privat
+        Route::get('/laporan/{id}/evidence', [VerifierController::class, 'showEvidence'])->name('reports.evidence');
     });
 
-    //admin workspace
+    // admin workspace
     Route::middleware('role:Admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/antrean', [AdminController::class, 'index'])->name('index');
         Route::patch('/laporan/{id}/status', [AdminController::class, 'updateStatus'])->name('reports.update');

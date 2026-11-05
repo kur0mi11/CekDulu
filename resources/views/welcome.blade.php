@@ -22,11 +22,12 @@
             <div class="mt-4 text-start">
                 @if($laporan)
                     <div class="alert alert-warning">
-                        <h5 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Nomor ini memiliki laporan terverifikasi terkait indikasi penipuan.</h5>
+                        <h5 class="alert-heading">Nomor ini memiliki laporan terverifikasi terkait indikasi penipuan.</h5>
                         <hr>
                         <p class="mb-1"><strong>Nomor Telepon:</strong> {{ $laporan->reported_value }}</p>
                         <p class="mb-1"><strong>Kategori:</strong> {{ $laporan->category->name ?? 'Tidak diketahui' }}</p>
-                        <p class="mb-0"><strong>Kronologi Singkat:</strong> {{ $laporan->chronology }}</p>
+                        <p class="mb-2"><strong>Ringkasan:</strong> {{ $laporan->public_summary ?? Str::limit($laporan->chronology, 200) }}</p>
+                        <p class="small text-muted mb-0">Status terverifikasi berarti laporan lolos pemeriksaan internal CekDulu. Ini bukan putusan hukum dan tidak membuktikan identitas pemilik nomor.</p>
                     </div>
                 @else
                     <div class="alert alert-info">

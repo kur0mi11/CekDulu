@@ -64,10 +64,8 @@
                     </div>
                 </div>
 
-                <!-- KUMPULAN TOMBOL AKSI (HORIZONTAL CARDS) -->
                 <div class="d-flex flex-column gap-3">
                     
-                    <!-- Card 1: Tugas Pemeriksaan (Utama) -->
                     <div class="card border-0 shadow-sm" style="border-radius: 16px;">
                         <div class="card-body p-4">
                             <div class="d-flex flex-column flex-md-row align-items-center justify-content-between text-center text-md-start">
@@ -83,13 +81,12 @@
                                     </div>
                                 </div>
                                 <a href="{{ route('verifier.index') }}" class="btn btn-primary rounded-pill px-4 py-2 fw-medium shadow-sm text-nowrap ms-md-3">
-                                    Buka Antrean <i class="bi bi-arrow-right ms-1"></i>
+                                    Buka Antrean 
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Card 2: Riwayat Pemeriksaan (Sekunder) -->
                     <div class="card border-0 shadow-sm" style="border-radius: 16px;">
                         <div class="card-body p-4">
                             <div class="d-flex flex-column flex-md-row align-items-center justify-content-between text-center text-md-start">
@@ -105,7 +102,7 @@
                                     </div>
                                 </div>
                                 <a href="{{ route('verifier.index') }}#riwayat-pane" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-medium shadow-sm text-nowrap ms-md-3">
-                                    Lihat Riwayat <i class="bi bi-arrow-right ms-1"></i>
+                                    Lihat Riwayat 
                                 </a>
                             </div>
                         </div>

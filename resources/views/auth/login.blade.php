@@ -47,7 +47,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm mb-3">
-                            Masuk <i class="bi bi-arrow-right-short ms-1"></i>
+                            Masuk 
                         </button>
 
                         <div class="text-center mt-2">

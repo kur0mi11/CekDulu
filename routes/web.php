@@ -45,6 +45,9 @@ Route::middleware(['auth', 'nocache'])->group(function () {
     // admin workspace
     Route::middleware('role:Admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/antrean', [AdminController::class, 'index'])->name('index');
-        Route::patch('/laporan/{id}/status', [AdminController::class, 'updateStatus'])->name('reports.update');
+        Route::get('/laporan/{id}', [AdminController::class, 'show'])->name('reports.show');
+        Route::get('/laporan/{id}/bukti', [AdminController::class, 'evidence'])->name('reports.evidence');
+        Route::patch('/laporan/{id}/setujui', [AdminController::class, 'approve'])->name('reports.approve');
+        Route::patch('/laporan/{id}/tolak', [AdminController::class, 'reject'])->name('reports.reject');
     });
 });

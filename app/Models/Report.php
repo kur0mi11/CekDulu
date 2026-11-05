@@ -18,6 +18,7 @@ class Report extends Model
         'verifier_id',
         'admin_id',
         'revision_note',
+        'public_summary',
     ];
 
 

@@ -46,6 +46,7 @@ class AuthController extends Controller
         $role = $user->role?->name;
 
         $reports = collect();
+        $queue = collect();
         $stats = [];
 
         if ($role === 'User') {
@@ -67,9 +68,15 @@ class AuthController extends Controller
                 ->groupBy('status')
                 ->pluck('total', 'status')
                 ->all();
+
+            $queue = Report::with('category')
+                ->where('status', 'pending_admin_review')
+                ->oldest()
+                ->take(5)
+                ->get();
         }
 
-        return view('dashboard', compact('role', 'stats', 'reports'));
+        return view('dashboard', compact('role', 'stats', 'reports', 'queue'));
     }
 
     public function showRegistrationForm()

@@ -13,10 +13,29 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    <!-- Form Pencarian / Filtering -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form action="{{ route('verifier.index') }}" method="GET" class="d-flex">
+                <input type="text" name="search" class="form-control me-2" placeholder="Cari nama pelapor atau nomor/rekening..." value="{{ request('search') }}">
+                <button type="submit" class="btn btn-primary px-4">Cari</button>
+                @if(request('search'))
+                    <a href="{{ route('verifier.index') }}" class="btn btn-outline-secondary ms-2">Reset</a>
+                @endif
+            </form>
+        </div>
+    </div>
+
     <div class="card shadow-sm">
         <div class="card-body table-responsive">
             @if($antrean->isEmpty())
-                <p class="text-center text-muted mb-0">Hore! Tidak ada laporan yang mengantre untuk diperiksa.</p>
+                <p class="text-center text-muted mb-0 my-3">
+                    @if(request('search'))
+                        Tidak ada laporan yang cocok dengan kata kunci pencarian.
+                    @else
+                        Hore! Tidak ada laporan yang mengantre untuk diperiksa.
+                    @endif
+                </p>
             @else
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
@@ -44,7 +63,6 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <!-- Tombol ini akan mengarah ke halaman detail untuk melihat file bukti -->
                                     <a href="{{ route('verifier.reports.show', $laporan->id) }}" class="btn btn-sm btn-primary">Periksa Detail</a>
                                 </td>
                             </tr>

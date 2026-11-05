@@ -8,9 +8,22 @@ use Illuminate\Support\Facades\Storage;
 
 class VerifierController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $antrean = Report::whereIn('status', ['pending', 'need_revision'])->latest()->get();
+        $search = $request->search;
+
+        $antrean = Report::whereIn('status', ['pending', 'need_revision'])
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('reported_value', 'like', '%' . $search . '%')
+                      ->orWhereHas('user', function ($userQuery) use ($search) {
+                          $userQuery->where('name', 'like', '%' . $search . '%');
+                      });
+                });
+            })
+            ->latest()
+            ->get();
+
         return view('verifier.index', compact('antrean'));
     }
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Akun - CekDulu')
+@section('title', 'Daftar Akun')
 
 @section('content')
 <div class="container d-flex justify-content-center align-items-center mb-5" style="min-height: 75vh;">

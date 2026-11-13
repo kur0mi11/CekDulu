@@ -70,6 +70,15 @@
                     <div class="bg-light p-4 rounded-4 text-dark" style="border: 1px solid #f0f0f0;">
                         {{ $report->chronology ?? 'Tidak ada kronologi yang ditulis.' }}
                     </div>
+                    
+                    @if($report->status === 'pending' && $report->revision_note)
+                        <div class="alert alert-warning mt-4 mb-0">
+                            <strong>Catatan revisi sebelumnya:</strong>
+                            <p class="mb-0">{{ $report->revision_note }}</p>
+                            <p class="small text-muted mb-0 mt-2">Laporan ini sudah diperbaiki pelapor dan dikirim ulang untuk diperiksa.</p>
+                        </div>
+                    @endif
+                    
                 </div>
             </div>
 

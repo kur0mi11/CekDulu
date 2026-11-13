@@ -21,10 +21,11 @@
                     <p class="mb-2"><strong>Kategori:</strong> {{ $report->category->name ?? '-' }}</p>
                     <p class="mb-0"><strong>Status:</strong> @include('partials.status-badge', ['report' => $report])</p>
 
-                    @if($report->status === 'need_revision' && $report->revision_note)
+                    @if($report->status === 'need_revision')
                         <div class="alert alert-danger mt-3 mb-0">
                             <strong>Catatan Revisi dari Verifier:</strong>
-                            <p class="mb-0">{{ $report->revision_note }}</p>
+                            <p class="mb-3">{{ $report->revision_note ?? 'Tidak ada catatan tambahan.' }}</p>
+                            <a href="{{ route('reports.edit', $report->id) }}" class="btn btn-danger btn-sm">Perbaiki Laporan</a>
                         </div>
                     @endif
 

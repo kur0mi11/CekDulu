@@ -60,8 +60,11 @@
                                         -
                                     @endif
                                 </td>
-                                <td>
+                                <td class="text-nowrap">
                                     <a href="{{ route('reports.show', $report->id) }}" class="btn btn-sm btn-outline-secondary">Detail</a>
+                                    @if($report->status === 'need_revision')
+                                        <a href="{{ route('reports.edit', $report->id) }}" class="btn btn-sm btn-danger">Revisi</a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

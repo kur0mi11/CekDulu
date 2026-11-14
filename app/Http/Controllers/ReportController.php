@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Report;
+use App\Rules\PhoneNumber;
+use App\Support\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -31,7 +33,7 @@ class ReportController extends Controller
             'user_id'        => auth()->id(),
             'category_id'    => $validated['category_id'],
             'reported_type'  => 'phone',
-            'reported_value' => $this->normalizePhone($validated['reported_value']),
+            'reported_value' => Phone::normalize($validated['reported_value']),
             'chronology'     => $validated['chronology'],
             'evidence_file'  => $path,
             'status'         => 'pending',
@@ -90,7 +92,7 @@ class ReportController extends Controller
 
         $report->update([
             'category_id'    => $validated['category_id'],
-            'reported_value' => $this->normalizePhone($validated['reported_value']),
+            'reported_value' => Phone::normalize($validated['reported_value']),
             'chronology'     => $validated['chronology'],
             'evidence_file'  => $newFile ?? $oldFile,
             'status'         => 'pending',
@@ -127,7 +129,7 @@ class ReportController extends Controller
     private function rules(bool $evidenceRequired): array
     {
         return [
-            'reported_value' => 'required|string|max:30',
+            'reported_value' => ['required', 'string', 'max:30', new PhoneNumber],
             'category_id'    => 'required|exists:categories,id',
             'chronology'     => 'required|string|max:5000',
             'evidence_file'  => ($evidenceRequired ? 'required' : 'nullable')
@@ -150,16 +152,5 @@ class ReportController extends Controller
             'evidence_file.mimes'     => 'Bukti harus berupa file JPG, PNG, atau PDF.',
             'evidence_file.max'       => 'Ukuran bukti maksimal 2 MB.',
         ];
-    }
-
-    private function normalizePhone(string $raw): string
-    {
-        $clean = preg_replace('/[^0-9]/', '', $raw);
-
-        if (str_starts_with($clean, '62')) {
-            $clean = '0' . substr($clean, 2);
-        }
-
-        return $clean;
     }
 }

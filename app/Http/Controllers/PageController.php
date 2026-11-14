@@ -3,30 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\Report;
+use App\Support\Phone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PageController extends Controller
 {
     public function index(Request $request)
     {
-        $query = $request->input('nomor');
-        $laporan = null;
+        $query      = trim((string) $request->input('nomor', ''));
+        $normalized = null;
+        $error      = null;
+        $laporan    = collect();
 
-        if ($query) {
-            //normalisasi nomor yang dicari
-            $cleanPhone = preg_replace('/[^0-9]/', '', $query);
-            if (str_starts_with($cleanPhone, '62')) {
-                $cleanPhone = '0' . substr($cleanPhone, 2);
+        if ($query !== '') {
+            $normalized = Phone::normalize($query);
+
+            if ($normalized === null) {
+                $error = 'Format nomor tidak valid. Masukkan nomor seluler Indonesia, contoh 081234567890 atau +6281234567890.';
+            } else {
+                $laporan = Report::with('category:id,name')
+                    ->where('reported_type', 'phone')
+                    ->where('reported_value', $normalized)
+                    ->where('status', 'verified')
+                    ->latest()
+                    ->get(['id', 'category_id', 'chronology', 'public_summary'])
+                    ->map(fn ($report) => [
+                        'kategori' => $report->category->name ?? 'Tidak diketahui',
+                        'ringkasan' => $report->public_summary
+                            ?? Str::limit($report->chronology, 200),
+                    ]);
             }
-
-            //pencarian data dengan batasan ketat (cuma phone dan verified)
-            $laporan = Report::where('reported_type', 'phone') // Kunci ke tipe nomor telepon
-                            ->where('reported_value', $cleanPhone)
-                            ->where('status', 'verified') // WAJIB: Hanya tampilkan yang disetujui Admin
-                            ->first();
         }
-
-        //kirim data ke ui publik
-        return view('welcome', compact('laporan', 'query')); 
+        return view('welcome', compact('laporan', 'query', 'normalized', 'error'));
     }
 }

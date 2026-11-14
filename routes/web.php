@@ -8,7 +8,7 @@ use App\Http\Controllers\VerifierController;
 use App\Http\Controllers\AdminController;
 
 // rute public
-Route::get('/', [PageController::class, 'index']);
+Route::get('/', [PageController::class, 'index'])->middleware('throttle:30,1');
 
 // rute guest kalau belum login
 Route::middleware('guest')->group(function () {

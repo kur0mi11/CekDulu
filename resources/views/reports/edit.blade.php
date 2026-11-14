@@ -40,12 +40,14 @@
                     <div class="mb-3">
                         <label for="reported_value" class="form-label fw-bold">Nomor Telepon <span class="text-danger">*</span></label>
                         <input type="text" id="reported_value" name="reported_value"
-                               class="form-control @error('reported_value') is-invalid @enderror"
-                               value="{{ old('reported_value', $report->reported_value) }}"
-                               placeholder="Contoh: 081234567890" required>
+                            class="form-control @error('reported_value') is-invalid @enderror"
+                            value="{{ old('reported_value', $report->reported_value) }}"
+                            placeholder="Contoh: 081234567890" inputmode="tel" maxlength="30"
+                            data-phone-input="#phone-hint" required>
                         @error('reported_value')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
+                        <div id="phone-hint" class="form-text">Bisa ditulis 0812..., +62812..., atau 62812...</div>
                     </div>
 
                     <div class="mb-3">
@@ -99,4 +101,9 @@
 
     </div>
 </div>
+
+@push('scripts')
+    @include('partials.phone-input-script')
+@endpush
+
 @endsection

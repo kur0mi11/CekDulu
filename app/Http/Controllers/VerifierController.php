@@ -20,6 +20,8 @@ class VerifierController extends Controller
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('reported_value', 'like', '%' . $search . '%')
+                      ->orWhere('bank_name', 'like', '%' . $search . '%')
+                      ->orWhere('account_holder', 'like', '%' . $search . '%')
                       ->orWhereHas('user', function ($userQuery) use ($search) {
                           $userQuery->where('name', 'like', '%' . $search . '%');
                       });
@@ -33,6 +35,8 @@ class VerifierController extends Controller
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('reported_value', 'like', '%' . $search . '%')
+                      ->orWhere('bank_name', 'like', '%' . $search . '%')
+                      ->orWhere('account_holder', 'like', '%' . $search . '%')
                       ->orWhereHas('user', function ($userQuery) use ($search) {
                           $userQuery->where('name', 'like', '%' . $search . '%');
                       });

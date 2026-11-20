@@ -17,7 +17,16 @@
                 </div>
                 <div class="card-body">
                     <p class="mb-2"><strong>Tanggal Dikirim:</strong> {{ $report->created_at->format('d M Y, H:i') }} WIB</p>
-                    <p class="mb-2"><strong>Nomor Telepon:</strong> <span class="fw-bold">{{ $report->reported_value }}</span></p>
+                    <p class="mb-2"><strong>Jenis Laporan:</strong> <span class="badge bg-light text-dark border">{{ $report->type_label }}</span></p>
+                    @if($report->reported_type === 'bank_account')
+                        <p class="mb-2"><strong>Bank / Dompet Digital:</strong> {{ \App\Support\Bank::label($report->bank_name) }}</p>
+                        <p class="mb-2"><strong>Nomor Rekening / Akun:</strong> <span class="fw-bold">{{ $report->reported_value }}</span></p>
+                        @if($report->account_holder)
+                            <p class="mb-2"><strong>Nama Pemilik (Atas Nama):</strong> <span class="fw-bold">{{ $report->account_holder }}</span></p>
+                        @endif
+                    @else
+                        <p class="mb-2"><strong>Nomor Telepon:</strong> <span class="fw-bold">{{ $report->reported_value }}</span></p>
+                    @endif
                     <p class="mb-2"><strong>Kategori:</strong> {{ $report->category->name ?? '-' }}</p>
                     <p class="mb-0"><strong>Status:</strong> @include('partials.status-badge', ['report' => $report])</p>
 

@@ -94,7 +94,10 @@
                                                     <span class="fw-medium text-dark">{{ $laporan->user->name ?? 'Anonim' }}</span>
                                                 </div>
                                             </td>
-                                            <td><span class="fw-bold fs-6 text-dark" style="letter-spacing: 1px;">{{ $laporan->reported_value }}</span></td>
+                                            <td>
+                                                <div class="fw-bold fs-6 text-dark">{{ $laporan->target_display }}</div>
+                                                <span class="badge bg-light text-secondary border small">{{ $laporan->type_label }}</span>
+                                            </td>
                                             <td>
                                                 @if($laporan->status === 'pending')
                                                     <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-50 rounded-pill px-3 py-2">
@@ -152,7 +155,10 @@
                                                     <span class="fw-medium text-dark">{{ $laporan->user->name ?? 'Anonim' }}</span>
                                                 </div>
                                             </td>
-                                            <td><span class="fw-bold fs-6 text-dark" style="letter-spacing: 1px;">{{ $laporan->reported_value }}</span></td>
+                                            <td>
+                                                <div class="fw-bold fs-6 text-dark">{{ $laporan->target_display }}</div>
+                                                <span class="badge bg-light text-secondary border small">{{ $laporan->type_label }}</span>
+                                            </td>
                                             <td>
                                                 @if($laporan->status === 'pending_admin_review')
                                                     <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-50 rounded-pill px-3 py-2">

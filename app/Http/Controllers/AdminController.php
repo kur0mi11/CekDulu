@@ -71,7 +71,7 @@ class AdminController extends Controller
 
         return redirect()
             ->route('admin.index')
-            ->with('success', 'Laporan untuk nomor ' . $report->reported_value . ' disetujui dan kini tampil di pencarian publik.');
+            ->with('success', 'Laporan untuk ' . $report->target_display . ' disetujui dan kini tampil di pencarian publik.');
     }
 
     public function reject(Request $request, $id)
@@ -97,6 +97,6 @@ class AdminController extends Controller
 
         return redirect()
             ->route('admin.index')
-            ->with('success', 'Laporan untuk nomor ' . $report->reported_value . ' ditolak dan tidak dipublikasikan.');
+            ->with('success', 'Laporan untuk ' . $report->target_display . ' ditolak dan tidak dipublikasikan.');
     }
 }

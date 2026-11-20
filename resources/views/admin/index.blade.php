@@ -36,7 +36,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th class="ps-4">Dikirim</th>
-                                    <th>Nomor Telepon</th>
+                                    <th>Target Laporan</th>
                                     <th>Kategori</th>
                                     <th>Diperiksa Oleh</th>
                                     <th>Kronologi</th>
@@ -47,7 +47,10 @@
                                 @foreach($queue as $report)
                                     <tr>
                                         <td class="ps-4">{{ $report->created_at->format('d M Y, H:i') }} WIB</td>
-                                        <td class="fw-bold">{{ $report->reported_value }}</td>
+                                        <td>
+                                            <div class="fw-bold">{{ $report->target_display }}</div>
+                                            <span class="badge bg-light text-secondary border small">{{ $report->type_label }}</span>
+                                        </td>
                                         <td>{{ $report->category->name ?? '-' }}</td>
                                         <td>{{ $report->verifier->name ?? '-' }}</td>
                                         <td>{{ Str::limit($report->chronology, 60) }}</td>
@@ -71,7 +74,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th class="ps-4">Tanggal Keputusan</th>
-                                    <th>Nomor Telepon</th>
+                                    <th>Target Laporan</th>
                                     <th>Kategori</th>
                                     <th>Keputusan</th>
                                     <th>Admin</th>
@@ -82,7 +85,10 @@
                                 @foreach($history as $report)
                                     <tr>
                                         <td class="ps-4">{{ $report->updated_at->format('d M Y, H:i') }} WIB</td>
-                                        <td class="fw-bold">{{ $report->reported_value }}</td>
+                                        <td>
+                                            <div class="fw-bold">{{ $report->target_display }}</div>
+                                            <span class="badge bg-light text-secondary border small">{{ $report->type_label }}</span>
+                                        </td>
                                         <td>{{ $report->category->name ?? '-' }}</td>
                                         <td>@include('partials.status-badge', ['report' => $report])</td>
                                         <td>{{ $report->admin->name ?? '-' }}</td>

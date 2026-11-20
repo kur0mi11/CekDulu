@@ -23,34 +23,36 @@ class ReportStatusChanged extends Notification
 
     public function toArray(object $notifiable): array
     {
+        $target = $this->report->target_display;
+
         $info = match ($this->status) {
             'need_revision' => [
                 'title' => 'Laporan Perlu Revisi',
-                'message' => 'Laporan nomor ' . $this->report->reported_value . ' memerlukan revisi: ' . ($this->note ?? 'Mohon lengkapi catatan atau bukti laporan Anda.'),
+                'message' => 'Laporan ' . $target . ' memerlukan revisi: ' . ($this->note ?? 'Mohon lengkapi catatan atau bukti laporan Anda.'),
                 'icon' => 'exclamation-circle-fill',
                 'badge_class' => 'danger',
             ],
             'pending_admin_review' => [
                 'title' => 'Laporan Menunggu Persetujuan Admin',
-                'message' => 'Laporan nomor ' . $this->report->reported_value . ' telah lolos verifikasi dan diteruskan ke admin.',
+                'message' => 'Laporan ' . $target . ' telah lolos verifikasi dan diteruskan ke admin.',
                 'icon' => 'info-circle-fill',
                 'badge_class' => 'info',
             ],
             'verified' => [
                 'title' => 'Laporan Disetujui & Dipublikasikan',
-                'message' => 'Laporan nomor ' . $this->report->reported_value . ' telah diverifikasi oleh admin dan kini tayang di pencarian publik.',
+                'message' => 'Laporan ' . $target . ' telah diverifikasi oleh admin dan kini tayang di pencarian publik.',
                 'icon' => 'check-circle-fill',
                 'badge_class' => 'success',
             ],
             'rejected' => [
                 'title' => 'Laporan Ditolak',
-                'message' => 'Laporan nomor ' . $this->report->reported_value . ' ditolak: ' . ($this->note ?? 'Laporan tidak memenuhi kriteria publikasi.'),
+                'message' => 'Laporan ' . $target . ' ditolak: ' . ($this->note ?? 'Laporan tidak memenuhi kriteria publikasi.'),
                 'icon' => 'x-circle-fill',
                 'badge_class' => 'secondary',
             ],
             default => [
                 'title' => 'Status Laporan Diperbarui',
-                'message' => 'Status laporan nomor ' . $this->report->reported_value . ' telah diperbarui.',
+                'message' => 'Status laporan ' . $target . ' telah diperbarui.',
                 'icon' => 'bell-fill',
                 'badge_class' => 'primary',
             ],

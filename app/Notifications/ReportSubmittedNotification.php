@@ -22,10 +22,11 @@ class ReportSubmittedNotification extends Notification
 
     public function toArray(object $notifiable): array
     {
+        $target = $this->report->target_display;
         $title = $this->isRevision ? 'Laporan Selesai Direvisi' : 'Laporan Baru Masuk';
         $message = $this->isRevision
-            ? 'Laporan nomor ' . $this->report->reported_value . ' telah diperbaiki oleh pelapor dan siap diverifikasi ulang.'
-            : 'Laporan baru nomor ' . $this->report->reported_value . ' telah dikirim dan menunggu antrean pemeriksaan.';
+            ? 'Laporan ' . $target . ' telah diperbaiki oleh pelapor dan siap diverifikasi ulang.'
+            : 'Laporan baru ' . $target . ' telah dikirim dan menunggu antrean pemeriksaan.';
 
         return [
             'report_id' => $this->report->id,

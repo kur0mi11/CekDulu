@@ -21,11 +21,13 @@ class ReportReadyForModerationNotification extends Notification
 
     public function toArray(object $notifiable): array
     {
+        $target = $this->report->target_display;
+
         return [
             'report_id' => $this->report->id,
             'reported_value' => $this->report->reported_value,
             'title' => 'Laporan Siap Ditinjau Admin',
-            'message' => 'Laporan nomor ' . $this->report->reported_value . ' telah lolos pemeriksaan verifikator dan menunggu moderasi akhir.',
+            'message' => 'Laporan ' . $target . ' telah lolos pemeriksaan verifikator dan menunggu moderasi akhir.',
             'url' => route('admin.reports.show', $this->report->id),
             'icon' => 'shield-check',
             'badge_class' => 'info',

@@ -50,9 +50,27 @@
                                 <td class="fw-medium text-dark">: {{ $report->created_at->format('d M Y, H:i') }} WIB</td>
                             </tr>
                             <tr>
-                                <td class="text-muted">Target Laporan</td>
-                                <td class="fw-bold text-danger fs-5">: {{ $report->reported_value }}</td>
+                                <td class="text-muted">Jenis Target</td>
+                                <td class="fw-medium text-dark">: <span class="badge bg-light text-dark border">{{ $report->type_label }}</span></td>
                             </tr>
+                            <tr>
+                                <td class="text-muted">Target Laporan</td>
+                                <td class="fw-bold text-danger fs-5">: {{ $report->target_display }}</td>
+                            </tr>
+                            @if($report->reported_type === 'bank_account')
+                            <tr>
+                                <td class="text-muted">Nama Bank/Akun</td>
+                                <td class="fw-medium text-dark">: {{ \App\Support\Bank::label($report->bank_name) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Nomor Rekening</td>
+                                <td class="fw-medium text-dark">: {{ $report->reported_value }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Atas Nama</td>
+                                <td class="fw-medium text-dark">: {{ $report->account_holder ?? '-' }}</td>
+                            </tr>
+                            @endif
                             <tr>
                                 <td class="text-muted">Kategori</td>
                                 <td>: 

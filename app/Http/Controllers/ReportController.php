@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Report;
+use App\Models\User;
+use App\Notifications\ReportSubmittedNotification;
 use App\Rules\PhoneNumber;
 use App\Support\Phone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
@@ -29,7 +32,7 @@ class ReportController extends Controller
 
         $path = $request->file('evidence_file')->store('evidences', 'local');
 
-        Report::create([
+        $report = Report::create([
             'user_id'        => auth()->id(),
             'category_id'    => $validated['category_id'],
             'reported_type'  => 'phone',
@@ -38,6 +41,11 @@ class ReportController extends Controller
             'evidence_file'  => $path,
             'status'         => 'pending',
         ]);
+
+        $verifiers = User::whereHas('role', fn($q) => $q->where('name', 'Verifier'))->get();
+        if ($verifiers->isNotEmpty()) {
+            Notification::send($verifiers, new ReportSubmittedNotification($report, false));
+        }
 
         return redirect()
             ->route('dashboard')
@@ -101,6 +109,11 @@ class ReportController extends Controller
         // File lama dihapus setelah data baru berhasil tersimpan
         if ($newFile && $oldFile) {
             Storage::disk('local')->delete($oldFile);
+        }
+
+        $verifiers = User::whereHas('role', fn($q) => $q->where('name', 'Verifier'))->get();
+        if ($verifiers->isNotEmpty()) {
+            Notification::send($verifiers, new ReportSubmittedNotification($report, true));
         }
 
         return redirect()

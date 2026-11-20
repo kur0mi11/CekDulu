@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Report;
+use App\Models\User;
+use App\Notifications\ReportReadyForModerationNotification;
+use App\Notifications\ReportStatusChanged;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 
 class VerifierController extends Controller
@@ -65,6 +69,17 @@ class VerifierController extends Controller
 
         $report->verifier_id = auth()->id();
         $report->save();
+
+        // Notifikasi ke pelapor
+        $report->user?->notify(new ReportStatusChanged($report, $report->status, $report->revision_note));
+
+        // Jika diteruskan ke admin, kirim notifikasi ke seluruh admin
+        if ($report->status === 'pending_admin_review') {
+            $admins = User::whereHas('role', fn($q) => $q->where('name', 'Admin'))->get();
+            if ($admins->isNotEmpty()) {
+                Notification::send($admins, new ReportReadyForModerationNotification($report));
+            }
+        }
 
         return redirect()->route('verifier.index')->with('success', 'Status laporan berhasil diperbarui.');
     }

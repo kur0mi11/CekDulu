@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Report;
+use App\Notifications\ReportStatusChanged;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -66,6 +67,8 @@ class AdminController extends Controller
             'revision_note'  => null,
         ]);
 
+        $report->user?->notify(new ReportStatusChanged($report, 'verified'));
+
         return redirect()
             ->route('admin.index')
             ->with('success', 'Laporan untuk nomor ' . $report->reported_value . ' disetujui dan kini tampil di pencarian publik.');
@@ -89,6 +92,8 @@ class AdminController extends Controller
             'revision_note'  => $validated['rejection_reason'],
             'public_summary' => null,
         ]);
+
+        $report->user?->notify(new ReportStatusChanged($report, 'rejected', $validated['rejection_reason']));
 
         return redirect()
             ->route('admin.index')

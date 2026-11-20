@@ -6,6 +6,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VerifierController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\NotificationController;
 
 // rute public
 Route::get('/', [PageController::class, 'index'])->middleware('throttle:30,1');
@@ -25,6 +26,15 @@ Route::middleware(['auth', 'nocache'])->group(function () {
 
     // general dashboard
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
+
+    // notifikasi
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::get('/{id}/go', [NotificationController::class, 'readAndRedirect'])->name('readAndRedirect');
+        Route::post('/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('markAllAsRead');
+        Route::post('/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('markAsRead');
+        Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('destroy');
+    });
 
     // user workspace
     Route::middleware('role:User')->group(function () {

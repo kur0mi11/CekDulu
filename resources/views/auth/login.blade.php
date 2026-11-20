@@ -39,10 +39,15 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-medium text-dark small mb-1">Kata Sandi</label>
-                            <input type="password" name="password" class="form-control rounded-3 py-2 @error('password') is-invalid @enderror" placeholder="Masukkan password..." required>
+                            <label for="password" class="form-label fw-medium text-dark small mb-1">Kata Sandi</label>
+                            <div class="input-group">
+                                <input type="password" name="password" id="password" class="form-control rounded-start-3 py-2 @error('password') is-invalid @enderror" placeholder="Masukkan password..." required autocomplete="current-password">
+                                <button class="btn btn-outline-secondary border-start-0 rounded-end-3 px-3 d-flex align-items-center password-toggle-btn" type="button" data-toggle-password="password" aria-label="Tampilkan kata sandi" title="Tampilkan kata sandi">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
                             @error('password') 
-                                <div class="invalid-feedback">{{ $message }}</div> 
+                                <div class="invalid-feedback d-block">{{ $message }}</div> 
                             @enderror
                         </div>
 

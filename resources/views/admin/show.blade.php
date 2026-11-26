@@ -35,27 +35,9 @@
                     <table class="table table-borderless mb-0">
                         <tbody>
                             <tr>
-                                <td class="text-muted" style="width: 170px;">Jenis Laporan</td>
-                                <td><span class="badge bg-light text-dark border">{{ $report->type_label }}</span></td>
+                                <td class="text-muted" style="width: 170px;">Nomor Telepon</td>
+                                <td class="fw-bold fs-5">{{ $report->reported_value }}</td>
                             </tr>
-                            <tr>
-                                <td class="text-muted">Target Identitas</td>
-                                <td class="fw-bold fs-5 text-primary">{{ $report->target_display }}</td>
-                            </tr>
-                            @if($report->reported_type === 'bank_account')
-                            <tr>
-                                <td class="text-muted">Bank / E-Wallet</td>
-                                <td>{{ \App\Support\Bank::label($report->bank_name) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">Nomor Rekening</td>
-                                <td class="fw-bold">{{ $report->reported_value }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">Nama Pemilik</td>
-                                <td class="fw-bold">{{ $report->account_holder ?? '-' }}</td>
-                            </tr>
-                            @endif
                             <tr>
                                 <td class="text-muted">Kategori</td>
                                 <td>{{ $report->category->name ?? '-' }}</td>

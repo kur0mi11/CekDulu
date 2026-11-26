@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Support\Bank;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -12,9 +11,7 @@ class Report extends Model
         'user_id',
         'category_id',
         'reported_type',
-        'bank_name',
         'reported_value',
-        'account_holder',
         'chronology',
         'evidence_file',
         'status',
@@ -23,26 +20,6 @@ class Report extends Model
         'revision_note',
         'public_summary',
     ];
-
-    public function getTargetDisplayAttribute(): string
-    {
-        if ($this->reported_type === 'bank_account') {
-            $bank = Bank::label($this->bank_name);
-            $holder = $this->account_holder ? ' (a.n. ' . $this->account_holder . ')' : '';
-            return "{$bank} - {$this->reported_value}{$holder}";
-        }
-
-        return (string) $this->reported_value;
-    }
-
-    public function getTypeLabelAttribute(): string
-    {
-        return match ($this->reported_type) {
-            'bank_account' => 'Rekening Bank / E-Wallet',
-            'phone'        => 'Nomor Telepon',
-            default        => ucfirst((string) $this->reported_type),
-        };
-    }
 
 
     public function getStatusLabelAttribute(): string

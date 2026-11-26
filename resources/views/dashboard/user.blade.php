@@ -39,7 +39,7 @@
                     <thead>
                         <tr>
                             <th>Tanggal</th>
-                            <th>Target Laporan</th>
+                            <th>Nomor Telepon</th>
                             <th>Kategori</th>
                             <th>Status</th>
                             <th>Catatan</th>
@@ -50,13 +50,7 @@
                         @foreach($reports as $report)
                             <tr>
                                 <td>{{ $report->created_at->format('d M Y') }}</td>
-                                <td>
-                                    <span class="badge bg-light text-secondary border small mb-1">
-                                        <i class="bi bi-{{ $report->reported_type === 'bank_account' ? 'credit-card-2-front' : 'telephone' }} me-1"></i>
-                                        {{ $report->reported_type === 'bank_account' ? 'Rekening' : 'Telepon' }}
-                                    </span>
-                                    <div class="fw-semibold">{{ $report->target_display }}</div>
-                                </td>
+                                <td class="fw-semibold">{{ $report->reported_value }}</td>
                                 <td>{{ $report->category->name ?? '-' }}</td>
                                 <td>@include('partials.status-badge', ['report' => $report])</td>
                                 <td>

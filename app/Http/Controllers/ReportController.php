@@ -7,7 +7,6 @@ use App\Models\Report;
 use App\Models\User;
 use App\Notifications\ReportSubmittedNotification;
 use App\Rules\PhoneNumber;
-use App\Support\Bank;
 use App\Support\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
@@ -23,29 +22,21 @@ class ReportController extends Controller
     public function create()
     {
         $categories = Category::orderBy('name')->get();
-        $banks = Bank::all();
 
-        return view('reports.create', compact('categories', 'banks'));
+        return view('reports.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
-        $type = $request->input('reported_type', 'phone');
-        $validated = $request->validate($this->rules($type, evidenceRequired: true), $this->messages($type));
+        $validated = $request->validate($this->rules(evidenceRequired: true), $this->messages());
 
         $path = $request->file('evidence_file')->store('evidences', 'local');
-
-        $reportedValue = $type === 'phone'
-            ? Phone::normalize($validated['reported_value'])
-            : preg_replace('/[^0-9A-Za-z]/', '', $validated['reported_value']);
 
         $report = Report::create([
             'user_id'        => auth()->id(),
             'category_id'    => $validated['category_id'],
-            'reported_type'  => $type,
-            'bank_name'      => $type === 'bank_account' ? $validated['bank_name'] : null,
-            'reported_value' => $reportedValue,
-            'account_holder' => $type === 'bank_account' ? trim($validated['account_holder']) : null,
+            'reported_type'  => 'phone',
+            'reported_value' => Phone::normalize($validated['reported_value']),
             'chronology'     => $validated['chronology'],
             'evidence_file'  => $path,
             'status'         => 'pending',
@@ -88,9 +79,8 @@ class ReportController extends Controller
         $this->ensureRevisable($report);
 
         $categories = Category::orderBy('name')->get();
-        $banks = Bank::all();
 
-        return view('reports.edit', compact('report', 'categories', 'banks'));
+        return view('reports.edit', compact('report', 'categories'));
     }
 
     public function update(Request $request, string $id)
@@ -99,8 +89,7 @@ class ReportController extends Controller
 
         $this->ensureRevisable($report);
 
-        $type = $request->input('reported_type', $report->reported_type ?? 'phone');
-        $validated = $request->validate($this->rules($type, evidenceRequired: false), $this->messages($type));
+        $validated = $request->validate($this->rules(evidenceRequired: false), $this->messages());
 
         $oldFile = $report->evidence_file;
         $newFile = null;
@@ -109,16 +98,9 @@ class ReportController extends Controller
             $newFile = $request->file('evidence_file')->store('evidences', 'local');
         }
 
-        $reportedValue = $type === 'phone'
-            ? Phone::normalize($validated['reported_value'])
-            : preg_replace('/[^0-9A-Za-z]/', '', $validated['reported_value']);
-
         $report->update([
             'category_id'    => $validated['category_id'],
-            'reported_type'  => $type,
-            'bank_name'      => $type === 'bank_account' ? $validated['bank_name'] : null,
-            'reported_value' => $reportedValue,
-            'account_holder' => $type === 'bank_account' ? trim($validated['account_holder']) : null,
+            'reported_value' => Phone::normalize($validated['reported_value']),
             'chronology'     => $validated['chronology'],
             'evidence_file'  => $newFile ?? $oldFile,
             'status'         => 'pending',
@@ -157,43 +139,25 @@ class ReportController extends Controller
         );
     }
 
-    private function rules(string $type, bool $evidenceRequired): array
-    {
-        $rules = [
-            'reported_type' => 'nullable|in:phone,bank_account',
-            'category_id'   => 'required|exists:categories,id',
-            'chronology'    => 'required|string|max:5000',
-            'evidence_file' => ($evidenceRequired ? 'required' : 'nullable')
-                                . '|file|mimes:jpg,jpeg,png,pdf|max:2048',
-        ];
-
-        if ($type === 'bank_account') {
-            $rules['bank_name']      = 'required|string|max:50';
-            $rules['account_holder'] = 'required|string|min:2|max:100';
-            $rules['reported_value'] = 'required|string|min:5|max:30|regex:/^[0-9A-Za-z\-]+$/';
-        } else {
-            $rules['reported_value'] = ['required', 'string', 'max:30', new PhoneNumber];
-        }
-
-        return $rules;
-    }
-
-    private function messages(string $type): array
+    private function rules(bool $evidenceRequired): array
     {
         return [
-            'reported_type.required'   => 'Jenis laporan wajib dipilih.',
-            'reported_type.in'         => 'Jenis laporan tidak valid.',
-            'reported_value.required'  => $type === 'bank_account' ? 'Nomor rekening atau nomor akun wajib diisi.' : 'Nomor telepon wajib diisi.',
-            'reported_value.min'       => 'Nomor rekening minimal 5 karakter.',
-            'reported_value.max'       => 'Nomor yang dilaporkan terlalu panjang (maksimal 30 karakter).',
-            'reported_value.regex'     => 'Format nomor rekening hanya boleh angka dan huruf.',
-            'bank_name.required'       => 'Nama bank atau dompet digital wajib dipilih.',
-            'account_holder.required'  => 'Nama pemilik rekening wajib diisi.',
-            'account_holder.min'       => 'Nama pemilik rekening minimal 2 karakter.',
-            'account_holder.max'       => 'Nama pemilik rekening maksimal 100 karakter.',
-            'category_id.required'     => 'Pilih kategori laporan.',
-            'category_id.exists'       => 'Kategori yang dipilih tidak valid.',
-            'chronology.required'      => 'Kronologi kejadian wajib diisi.',
+            'reported_value' => ['required', 'string', 'max:30', new PhoneNumber],
+            'category_id'    => 'required|exists:categories,id',
+            'chronology'     => 'required|string|max:5000',
+            'evidence_file'  => ($evidenceRequired ? 'required' : 'nullable')
+                                . '|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ];
+    }
+
+    private function messages(): array
+    {
+        return [
+            'reported_value.required' => 'Nomor telepon wajib diisi.',
+            'reported_value.max'      => 'Nomor telepon terlalu panjang.',
+            'category_id.required'    => 'Pilih kategori laporan.',
+            'category_id.exists'      => 'Kategori yang dipilih tidak valid.',
+            'chronology.required'     => 'Kronologi kejadian wajib diisi.',
             'chronology.max'          => 'Kronologi maksimal 5000 karakter.',
             'evidence_file.required'  => 'Bukti pendukung wajib diunggah.',
             'evidence_file.file'      => 'Bukti harus berupa file.',

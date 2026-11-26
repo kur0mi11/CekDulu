@@ -75,7 +75,10 @@
                             </li>
                         @elseif($role === 'Admin')
                             <li class="nav-item">
-                                <a class="nav-link text-white {{ request()->routeIs('admin.*') ? 'fw-bold' : '' }}" href="{{ route('admin.index') }}">Antrean Moderasi</a>
+                                <a class="nav-link text-white {{ request()->routeIs('admin.index', 'admin.reports.*') ? 'fw-bold' : '' }}" href="{{ route('admin.index') }}">Antrean Moderasi</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('admin.categories.*') ? 'fw-bold' : '' }}" href="{{ route('admin.categories.index') }}">Kategori Penipuan</a>
                             </li>
                         @endif
                     @endauth

@@ -6,6 +6,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VerifierController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\NotificationController;
 
 // rute public
@@ -55,6 +56,13 @@ Route::middleware(['auth', 'nocache'])->group(function () {
     // admin workspace
     Route::middleware('role:Admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/antrean', [AdminController::class, 'index'])->name('index');
+
+        Route::patch('/kategori/{category}/status', [CategoryController::class, 'updateStatus'])->name('categories.status');
+        Route::resource('kategori', CategoryController::class)
+            ->only(['index', 'create', 'store', 'edit', 'update'])
+            ->parameters(['kategori' => 'category'])
+            ->names('categories');
+
         Route::get('/laporan/{id}', [AdminController::class, 'show'])->name('reports.show');
         Route::get('/laporan/{id}/bukti', [AdminController::class, 'evidence'])->name('reports.evidence');
         Route::patch('/laporan/{id}/setujui', [AdminController::class, 'approve'])->name('reports.approve');

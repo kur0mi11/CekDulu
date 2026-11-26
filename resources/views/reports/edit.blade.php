@@ -54,10 +54,11 @@
                         <label for="category_id" class="form-label fw-bold">Kategori Penipuan <span class="text-danger">*</span></label>
                         <select id="category_id" name="category_id"
                                 class="form-select @error('category_id') is-invalid @enderror" required>
+                            <option value="" disabled>-- Pilih Kategori --</option>
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}"
                                     {{ old('category_id', $report->category_id) == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
+                                    {{ $category->name }}{{ $category->is_active ? '' : ' (kategori lama, nonaktif)' }}
                                 </option>
                             @endforeach
                         </select>

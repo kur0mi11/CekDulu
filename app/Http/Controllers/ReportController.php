@@ -8,9 +8,11 @@ use App\Models\User;
 use App\Notifications\ReportSubmittedNotification;
 use App\Rules\PhoneNumber;
 use App\Support\Phone;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class ReportController extends Controller
 {
@@ -21,7 +23,7 @@ class ReportController extends Controller
 
     public function create()
     {
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::active()->orderBy('name')->get();
 
         return view('reports.create', compact('categories'));
     }
@@ -78,7 +80,10 @@ class ReportController extends Controller
 
         $this->ensureRevisable($report);
 
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::active()
+            ->orWhere('id', $report->category_id)
+            ->orderBy('name')
+            ->get();
 
         return view('reports.edit', compact('report', 'categories'));
     }
@@ -89,7 +94,7 @@ class ReportController extends Controller
 
         $this->ensureRevisable($report);
 
-        $validated = $request->validate($this->rules(evidenceRequired: false), $this->messages());
+        $validated = $request->validate($this->rules(evidenceRequired: false, currentCategoryId: $report->category_id), $this->messages());
 
         $oldFile = $report->evidence_file;
         $newFile = null;
@@ -139,11 +144,20 @@ class ReportController extends Controller
         );
     }
 
-    private function rules(bool $evidenceRequired): array
+    private function rules(bool $evidenceRequired, ?int $currentCategoryId = null): array
     {
+        $availableCategory = Rule::exists(Category::class, 'id')->where(function (Builder $query) use ($currentCategoryId) {
+            $query->where('is_active', true);
+
+            // Laporan yang direvisi boleh mempertahankan kategori lamanya.
+            if ($currentCategoryId !== null) {
+                $query->orWhere('id', $currentCategoryId);
+            }
+        });
+
         return [
             'reported_value' => ['required', 'string', 'max:30', new PhoneNumber],
-            'category_id'    => 'required|exists:categories,id',
+            'category_id'    => ['bail', 'required', 'integer', $availableCategory],
             'chronology'     => 'required|string|max:5000',
             'evidence_file'  => ($evidenceRequired ? 'required' : 'nullable')
                                 . '|file|mimes:jpg,jpeg,png,pdf|max:2048',
@@ -156,7 +170,8 @@ class ReportController extends Controller
             'reported_value.required' => 'Nomor telepon wajib diisi.',
             'reported_value.max'      => 'Nomor telepon terlalu panjang.',
             'category_id.required'    => 'Pilih kategori laporan.',
-            'category_id.exists'      => 'Kategori yang dipilih tidak valid.',
+            'category_id.integer'     => 'Kategori yang dipilih tidak valid.',
+            'category_id.exists'      => 'Kategori yang dipilih sudah tidak tersedia.',
             'chronology.required'     => 'Kronologi kejadian wajib diisi.',
             'chronology.max'          => 'Kronologi maksimal 5000 karakter.',
             'evidence_file.required'  => 'Bukti pendukung wajib diunggah.',

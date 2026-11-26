@@ -36,6 +36,9 @@
                                     </option>
                                 @endforeach
                             </select>
+                            @if($categories->isEmpty())
+                                <div class="form-text">Belum ada kategori aktif. Laporan belum dapat dikirim.</div>
+                            @endif
                             @error('category_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -60,7 +63,7 @@
 
                         <div class="d-flex justify-content-end">
                             <a href="{{ route('dashboard') }}" class="btn btn-secondary me-2">Batal</a>
-                            <button type="submit" class="btn btn-primary">Kirim Laporan</button>
+                            <button type="submit" class="btn btn-primary" @disabled($categories->isEmpty())>Kirim Laporan</button>
                         </div>
                     </form>
                 </div>

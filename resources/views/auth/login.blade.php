@@ -31,15 +31,15 @@
                         @csrf
 
                         <div class="mb-3">
-                            <label class="form-label fw-medium text-dark small mb-1">Email</label>
-                            <input type="email" name="email" class="form-control rounded-3 py-2 @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Masukkan email..." required>
+                            <label for="email" class="form-label fw-medium text-dark small mb-1">Email <span class="text-danger">*</span></label>
+                            <input type="email" name="email" id="email" class="form-control rounded-3 py-2 @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Masukkan email..." required>
                             @error('email') 
                                 <div class="invalid-feedback">{{ $message }}</div> 
                             @enderror
                         </div>
 
                         <div class="mb-4">
-                            <label for="password" class="form-label fw-medium text-dark small mb-1">Kata Sandi</label>
+                            <label for="password" class="form-label fw-medium text-dark small mb-1">Kata Sandi <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <input type="password" name="password" id="password" class="form-control rounded-start-3 py-2 @error('password') is-invalid @enderror" placeholder="Masukkan password..." required autocomplete="current-password">
                                 <button class="btn btn-outline-secondary border-start-0 rounded-end-3 px-3 d-flex align-items-center password-toggle-btn" type="button" data-toggle-password="password" aria-label="Tampilkan kata sandi" title="Tampilkan kata sandi">

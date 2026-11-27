@@ -21,7 +21,7 @@
                     @endif
 
                     <div class="mb-4">
-                        <label for="name" class="form-label fw-semibold">Nama Kategori</label>
+                        <label for="name" class="form-label fw-semibold">Nama Kategori <span class="text-danger">*</span></label>
                         <input type="text" id="name" name="name" value="{{ old('name', $category->name) }}"
                                class="form-control @error('name') is-invalid @enderror" maxlength="255" required>
                         @error('name')

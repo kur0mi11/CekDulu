@@ -29,19 +29,19 @@
                         @csrf
 
                         <div class="mb-3">
-                            <label class="form-label fw-medium text-dark small mb-1">Nama Lengkap</label>
+                            <label class="form-label fw-medium text-dark small mb-1">Nama Lengkap <span class="text-danger">*</span></label>
                             <input type="text" name="name" class="form-control rounded-3 py-2 @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="Masukkan nama Anda" required>
                             @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-medium text-dark small mb-1">Email</label>
+                            <label class="form-label fw-medium text-dark small mb-1">Email <span class="text-danger">*</span></label>
                             <input type="email" name="email" class="form-control rounded-3 py-2 @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="contoh@email.com" required>
                             @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="mb-3">
-                            <label for="password" class="form-label fw-medium text-dark small mb-1">Kata Sandi</label>
+                            <label for="password" class="form-label fw-medium text-dark small mb-1">Kata Sandi <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <input type="password" name="password" id="password" class="form-control rounded-start-3 py-2 @error('password') is-invalid @enderror" placeholder="Minimal 8 karakter" required autocomplete="new-password">
                                 <button class="btn btn-outline-secondary border-start-0 rounded-end-3 px-3 d-flex align-items-center password-toggle-btn" type="button" data-toggle-password="password" aria-label="Tampilkan kata sandi" title="Tampilkan kata sandi">
@@ -52,7 +52,7 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="password_confirmation" class="form-label fw-medium text-dark small mb-1">Konfirmasi Kata Sandi</label>
+                            <label for="password_confirmation" class="form-label fw-medium text-dark small mb-1">Konfirmasi Kata Sandi <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <input type="password" name="password_confirmation" id="password_confirmation" class="form-control rounded-start-3 py-2" placeholder="Ulangi kata sandi" required autocomplete="new-password">
                                 <button class="btn btn-outline-secondary border-start-0 rounded-end-3 px-3 d-flex align-items-center password-toggle-btn" type="button" data-toggle-password="password_confirmation" aria-label="Tampilkan kata sandi" title="Tampilkan kata sandi">
